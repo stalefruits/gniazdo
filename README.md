@@ -4,6 +4,8 @@
 testing WebSockets services without a browser. It uses [Jetty's][jetty]
 implementation of the WebSocket protocol.
 
+[![Build Status](https://travis-ci.org/stylefruits/gniazdo.png)](https://travis-ci.org/stylefruits/gniazdo)
+
 ## Usage
 
 ```clojure
