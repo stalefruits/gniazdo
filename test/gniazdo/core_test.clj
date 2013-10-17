@@ -1,0 +1,78 @@
+(ns gniazdo.core-test
+  (:require [clojure.string :as str])
+  (:use clojure.test
+        gniazdo.core
+        [org.httpkit.server :only [with-channel
+                                   on-receive
+                                   run-server
+                                   send!]])
+  (:import [java.util.concurrent Future]))
+
+(declare ^:dynamic *recv*)
+
+(defn- ws-srv
+  [req]
+  (with-channel req conn
+    (on-receive conn (partial *recv* req conn))))
+
+(use-fixtures
+  :each
+  (fn [f]
+    (let [srv (run-server ws-srv {:port 65432})]
+      (try
+        (f)
+        (finally
+          (srv))))))
+
+(def ^:private uri "ws://localhost:65432/")
+
+(defmacro ^:private with-timeout
+  [& body]
+  `(let [f# (future ~@body)]
+     (try
+       (.get ^Future f# 1 java.util.concurrent.TimeUnit/SECONDS)
+       (finally
+         (future-cancel f#)))))
+
+(deftest on-receive-test
+  (with-redefs [*recv* (fn [_ conn msg]
+                         (send! conn (str/upper-case msg)))]
+    (let [result (atom nil)
+          sem (java.util.concurrent.Semaphore. 0)
+          conn (connect
+                 uri
+                 :on-receive #(do (reset! result %)
+                                  (.release sem)))]
+      (is (= @result nil))
+      (send-msg conn "foo")
+      (with-timeout (.acquire sem))
+      (is (= @result "FOO"))
+      (send-msg conn "bar")
+      (with-timeout (.acquire sem))
+      (is (= @result "BAR"))
+      (close conn))))
+
+(deftest on-connect-test
+  (let [result (atom nil)
+        sem (java.util.concurrent.Semaphore. 0)
+        conn (connect
+               uri
+               :on-connect (fn [_]
+                             (reset! result :connected)
+                             (.release sem)))]
+    (with-timeout (.acquire sem))
+    (is (= @result :connected))
+    (close conn)))
+
+(deftest on-close-test
+  (let [result (atom nil)
+        sem (java.util.concurrent.Semaphore. 0)
+        conn (connect
+               uri
+               :on-close (fn [& _]
+                           (reset! result :closed)
+                           (.release sem)))]
+    (is (= @result nil))
+    (close conn)
+    (with-timeout (.acquire sem))
+    (is (= @result :closed))))
