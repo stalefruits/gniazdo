@@ -8,6 +8,14 @@ implementation of the WebSocket protocol.
 
 ## Usage
 
+Add the following artifact to `:dependencies` in your project.clj:
+
+```clojure
+[stylefruits/gniazdo "0.0.0-SNAPSHOT"]
+```
+
+Here's a minimal usage example:
+
 ```clojure
 (require [gniazdo.core :as ws])
 (def socket
