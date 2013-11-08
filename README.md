@@ -36,6 +36,9 @@ the `callbacks` map. Following keys are valid:
    established. The handler is a [`Session`][session] instance.
  - `:on-receive` – a unary function called when a message is received. The
    argument is a received `String`.
+ - `:on-binary` – a ternary function called when a message is received.
+   Arguments are the raw payload byte array, and two integers: the offset
+   in the array where the data starts and the length of the payload.
  - `:on-error` – a unary function called on in case of errors. The argument is
    a `Throwable` describing the error.
  - `:on-close` – a binary function called when the connection is closed.
@@ -48,7 +51,8 @@ See also [WebSocketListener][listener].
 ### `(gniazdo.core/send-msg [conn message])`
 
 `gniazdo.core/send-msg` sends a given message using a connection established
-with `gniazdo.core/connect`. The message should be a `String`.
+with `gniazdo.core/connect`. The message should be a `String`, `byte[]` or
+`java.nio.ByteBuffer`.
 
 ### `(gniazdo.core/close [conn])`
 
