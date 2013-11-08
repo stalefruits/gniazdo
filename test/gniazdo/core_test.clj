@@ -52,6 +52,30 @@
       (is (= @result "BAR"))
       (close conn))))
 
+(deftest on-binary-test
+  (with-redefs [*recv* (fn [_ conn msg]
+                         (send! conn (if (string? msg)
+                                       (.getBytes (str/upper-case msg))
+                                       msg)))]
+    (let [result (atom nil)
+          sem (java.util.concurrent.Semaphore. 0)
+          conn (connect
+                 uri
+                 :on-binary (fn [data offset length]
+                              (reset! result (String. data offset length))
+                              (.release sem)))]
+      (is (= @result nil))
+      (send-msg conn "foo")
+      (with-timeout (.acquire sem))
+      (is (= @result "FOO"))
+      (send-msg conn "bar")
+      (with-timeout (.acquire sem))
+      (is (= @result "BAR"))
+      (send-msg conn (.getBytes "bar"))
+      (with-timeout (.acquire sem))
+      (is (= @result "bar"))
+      (close conn))))
+
 (deftest on-connect-test
   (let [result (atom nil)
         sem (java.util.concurrent.Semaphore. 0)
