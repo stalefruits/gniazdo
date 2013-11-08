@@ -1,24 +1,51 @@
 (ns gniazdo.core
   (:import java.net.URI
+           java.nio.ByteBuffer
            (org.eclipse.jetty.websocket.client ClientUpgradeRequest
                                                WebSocketClient)
            (org.eclipse.jetty.websocket.api WebSocketListener
+                                            RemoteEndpoint
                                             Session)))
 
 (set! *warn-on-reflection* 1)
 
+;; ## Messages
+
+(defprotocol Sendable
+  (send-to-endpoint [this ^RemoteEndpoint e]
+    "Sends an entity to a given WebSocket endpoint."))
+
+(extend-protocol Sendable
+  java.lang.String
+  (send-to-endpoint [msg ^RemoteEndpoint e]
+    (.sendString e msg))
+
+  java.nio.ByteBuffer
+  (send-to-endpoint [buf ^RemoteEndpoint e]
+    (.sendBytes e buf)))
+
+(extend-type (class (byte-array 0))
+  Sendable
+  (send-to-endpoint [data ^RemoteEndpoint e]
+    (.sendBytes e (ByteBuffer/wrap data))))
+
+;; ## Client
+
 (defprotocol ^:private Client
-  (send-msg [this ^String msg] "Sends a message to the given WebSocket.")
-  (close [this] "Closes the WebSocket."))
+  (send-msg [this msg]
+    "Sends a message (implementing `gniazdo.core/Sendable`) to the given WebSocket.")
+  (close [this]
+    "Closes the WebSocket."))
 
 (defn- noop
   [& _])
 
 (defn connect
   "Connects to a WebSocket at a given URI (e.g. ws://example.org:1234/socket)."
-  [uri & {:keys [on-connect on-receive on-error on-close]
+  [uri & {:keys [on-connect on-receive on-binary on-error on-close]
           :or {on-connect noop
                on-receive noop
+               on-binary  noop
                on-error   noop
                on-close   noop}}]
   (let [request (ClientUpgradeRequest.)
@@ -27,6 +54,8 @@
         listener (reify WebSocketListener
                    (onWebSocketText [_ msg]
                      (on-receive msg))
+                   (onWebSocketBinary [_ data offset length]
+                     (on-binary data offset length))
                    (onWebSocketError [_ throwable]
                      (if (realized? result-promise)
                        (on-error throwable)
@@ -44,9 +73,8 @@
                                (throw result)
                                result)]
         (reify Client
-          (send-msg [_ msg] (-> session
-                                .getRemote
-                                (.sendString msg)))
+          (send-msg [_ msg]
+            (send-to-endpoint msg (.getRemote session)))
           (close [_] (do
                        (.close session)
                        (.stop client)))))
