@@ -3,6 +3,7 @@
            java.nio.ByteBuffer
            (org.eclipse.jetty.websocket.client ClientUpgradeRequest
                                                WebSocketClient)
+           (org.eclipse.jetty.util.ssl SslContextFactory)
            (org.eclipse.jetty.websocket.api WebSocketListener
                                             RemoteEndpoint
                                             Session)))
@@ -49,7 +50,10 @@
                on-error   noop
                on-close   noop}}]
   (let [request (ClientUpgradeRequest.)
-        client (WebSocketClient.)
+        uri (URI. uri)
+        client (if (= "wss" (.getScheme uri))
+                 (WebSocketClient. (SslContextFactory.))
+                 (WebSocketClient.))
         result-promise (promise)
         listener (reify WebSocketListener
                    (onWebSocketText [_ msg]
@@ -67,7 +71,7 @@
                      (on-close x y)))]
     (try
       (.start client)
-      (.connect client listener (URI. uri) request)
+      (.connect client listener uri request)
       (let [result @result-promise
             ^Session session (if (instance? Throwable result)
                                (throw result)
