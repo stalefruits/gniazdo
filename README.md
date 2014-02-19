@@ -2,7 +2,8 @@
 
 [Gniazdo][def] is a [WebSocket][ws] client for Clojure. Its main purpose is
 testing WebSockets services without a browser. It uses [Jetty's][jetty]
-implementation of the WebSocket protocol.
+implementation of the WebSocket protocol. It supports both `ws://` and `wss://`
+schemas.
 
 [![Build Status](https://travis-ci.org/stylefruits/gniazdo.png)](https://travis-ci.org/stylefruits/gniazdo)
 
