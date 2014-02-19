@@ -12,7 +12,7 @@ schemas.
 Add the following artifact to `:dependencies` in your project.clj:
 
 ```clojure
-[stylefruits/gniazdo "0.0.0"]
+[stylefruits/gniazdo "0.1.0"]
 ```
 
 Here's a minimal usage example:
