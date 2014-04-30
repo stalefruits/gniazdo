@@ -41,15 +41,29 @@
 (defn- noop
   [& _])
 
+(defn- add-headers!
+  [^ClientUpgradeRequest request headers]
+  {:pre [(every? string? (keys headers))]}
+  (doseq [[header value] headers]
+    (let [header-values (if (sequential? value)
+                          value
+                          [value])]
+      (assert (every? string? header-values))
+      (.setHeader
+        request
+        ^String header
+        ^java.util.List header-values))))
+
 (defn connect
   "Connects to a WebSocket at a given URI (e.g. ws://example.org:1234/socket)."
-  [uri & {:keys [on-connect on-receive on-binary on-error on-close]
+  [uri & {:keys [on-connect on-receive on-binary on-error on-close headers]
           :or {on-connect noop
                on-receive noop
                on-binary  noop
                on-error   noop
                on-close   noop}}]
-  (let [request (ClientUpgradeRequest.)
+  (let [request (doto (ClientUpgradeRequest.)
+                  (add-headers! headers))
         uri (URI. uri)
         client (if (= "wss" (.getScheme uri))
                  (WebSocketClient. (SslContextFactory.))
