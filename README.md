@@ -11,9 +11,7 @@ schemas.
 
 Add the following artifact to `:dependencies` in your project.clj:
 
-```clojure
-[stylefruits/gniazdo "0.1.0"]
-```
+[![Latest version](https://clojars.org/stylefruits/gniazdo/latest-version.svg)](https://clojars.org/stylefruits/gniazdo)
 
 Here's a minimal usage example:
 
