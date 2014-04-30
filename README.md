@@ -27,11 +27,10 @@ Here's a minimal usage example:
 (ws/close socket)
 ```
 
-### `(gniazdo.core/connect uri & callbacks)`
+### `(gniazdo.core/connect uri & options)`
 
 `gniazdo.core/connect` opens a WebSocket connection using a
-given `uri`. Functions handling WebSocket events should be specified using
-the `callbacks` map. Following keys are valid:
+given `uri`. The following `options`/callbacks are available:
 
  - `:on-connect` – a unary function called after the connection has been
    established. The handler is a [`Session`][session] instance.
@@ -44,6 +43,8 @@ the `callbacks` map. Following keys are valid:
    a `Throwable` describing the error.
  - `:on-close` – a binary function called when the connection is closed.
    Arguments are an `int` status code and a `String` description of reason.
+- `:headers`: a map of string keys and either string or string seq values to be
+  used as headers for the initial websocket connection request.
 
 `gniazdo.core/connect` returns an opaque representation of the connection.
 
