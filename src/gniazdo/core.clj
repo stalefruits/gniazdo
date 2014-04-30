@@ -43,12 +43,12 @@
 
 (defn- add-headers!
   [^ClientUpgradeRequest request headers]
+  {:pre (every? string? (keys headers))}
   (doseq [[header value] headers]
-    (assert (string? header))
-    (let [header-values (->> (if (sequential? value)
-                               value
-                               [value])
-                             (mapv str))]
+    (let [header-values (if (sequential? value)
+                          value
+                          [value])]
+      (assert (every? string? header-values))
       (.setHeader
         request
         ^String header
