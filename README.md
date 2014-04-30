@@ -43,7 +43,7 @@ given `uri`. The following `options`/callbacks are available:
    a `Throwable` describing the error.
  - `:on-close` – a binary function called when the connection is closed.
    Arguments are an `int` status code and a `String` description of reason.
- - `:headers`: a map of string keys and either string or string seq values to be
+ - `:headers` – a map of string keys and either string or string seq values to be
    used as headers for the initial websocket connection request.
 
 `gniazdo.core/connect` returns an opaque representation of the connection.
