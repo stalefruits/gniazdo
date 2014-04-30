@@ -43,7 +43,7 @@
 
 (defn- add-headers!
   [^ClientUpgradeRequest request headers]
-  {:pre (every? string? (keys headers))}
+  {:pre [(every? string? (keys headers))]}
   (doseq [[header value] headers]
     (let [header-values (if (sequential? value)
                           value
