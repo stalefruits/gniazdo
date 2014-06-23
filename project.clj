@@ -1,4 +1,4 @@
-(defproject stylefruits/gniazdo "0.2.1-SNAPSHOT"
+(defproject stylefruits/gniazdo "0.2.1"
   :description "A WebSocket client for Clojure"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.eclipse.jetty.websocket/websocket-client "9.2.1.v20140609"]]
