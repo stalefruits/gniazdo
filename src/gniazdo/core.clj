@@ -19,16 +19,16 @@
 (extend-protocol Sendable
   java.lang.String
   (send-to-endpoint [msg ^RemoteEndpoint e]
-    (.sendString e msg))
+    @(.sendStringByFuture e msg))
 
   java.nio.ByteBuffer
   (send-to-endpoint [buf ^RemoteEndpoint e]
-    (.sendBytes e buf)))
+    @(.sendBytesByFuture e buf)))
 
 (extend-type (class (byte-array 0))
   Sendable
   (send-to-endpoint [data ^RemoteEndpoint e]
-    (.sendBytes e (ByteBuffer/wrap data))))
+    @(.sendBytesByFuture e (ByteBuffer/wrap data))))
 
 ;; ## Client
 
