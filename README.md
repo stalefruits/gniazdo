@@ -5,7 +5,7 @@ testing WebSockets services without a browser. It uses [Jetty's][jetty]
 implementation of the WebSocket protocol. It supports both `ws://` and `wss://`
 schemas.
 
-[![Build Status](https://travis-ci.org/stylefruits/gniazdo.png)](https://travis-ci.org/stylefruits/gniazdo)
+[![Build Status](https://travis-ci.org/stylefruits/gniazdo.svg)](https://travis-ci.org/stylefruits/gniazdo)
 
 ## Usage
 
