@@ -38,6 +38,8 @@
   (close [this]
     "Closes the WebSocket."))
 
+;; ## WebSocket Helpers
+
 (defn- noop
   [& _])
 
@@ -54,48 +56,82 @@
         ^String header
         ^java.util.List header-values))))
 
+(defn- websocket-upgrade-request
+  ^ClientUpgradeRequest
+  [{:keys [headers]}]
+  (doto (ClientUpgradeRequest.)
+    (add-headers! headers)))
+
+(defn- websocket-listener
+  ^WebSocketListener
+  [{:keys [on-connect on-receive on-binary on-error on-close]
+    :or {on-connect noop
+         on-receive noop
+         on-binary  noop
+         on-error   noop
+         on-close   noop}}
+   result-promise]
+  (reify WebSocketListener
+    (onWebSocketText [_ msg]
+      (on-receive msg))
+    (onWebSocketBinary [_ data offset length]
+      (on-binary data offset length))
+    (onWebSocketError [_ throwable]
+      (if (realized? result-promise)
+        (on-error throwable)
+        (deliver result-promise throwable)))
+    (onWebSocketConnect [_ session]
+      (deliver result-promise session)
+      (on-connect session))
+    (onWebSocketClose [_ x y]
+      (on-close x y))))
+
+(defn- deref-session
+  ^Session
+  [result-promise]
+  (let [result @result-promise]
+    (if (instance? Throwable result)
+      (throw result)
+      result)))
+
+;; ## WebSocket Client + Connection (API)
+
+(defn websocket-client
+  ^WebSocketClient
+  ([] (WebSocketClient.))
+  ([^URI uri]
+   (if (= "wss" (.getScheme uri))
+     (WebSocketClient. (SslContextFactory.))
+     (WebSocketClient.))))
+
+(defn connect*
+  "Connect to a WebSocket by either creating a new WebSocketClient or using the supplied
+   one."
+  ([^String uri opts]
+   (let [^URI uri' (URI. uri)
+         ^WebSocketClient client (websocket-client uri')]
+     (try
+       (.start client)
+       (connect* client uri' opts #(.stop client))
+       (catch Throwable ex
+         (.stop client)
+         (throw ex)))))
+  ([^WebSocketClient client ^URI uri opts & [cleanup]]
+   (let [request (websocket-upgrade-request opts)
+         result-promise (promise)
+         listener (websocket-listener opts result-promise)]
+     (.connect client listener uri request)
+     (let [session (deref-session result-promise)]
+       (reify Client
+         (send-msg [_ msg]
+           (send-to-endpoint msg (.getRemote session)))
+         (close [_]
+           (when cleanup
+             (cleanup))
+           (.close session)))))))
+
 (defn connect
   "Connects to a WebSocket at a given URI (e.g. ws://example.org:1234/socket)."
   [uri & {:keys [on-connect on-receive on-binary on-error on-close headers]
-          :or {on-connect noop
-               on-receive noop
-               on-binary  noop
-               on-error   noop
-               on-close   noop}}]
-  (let [request (doto (ClientUpgradeRequest.)
-                  (add-headers! headers))
-        uri (URI. uri)
-        client (if (= "wss" (.getScheme uri))
-                 (WebSocketClient. (SslContextFactory.))
-                 (WebSocketClient.))
-        result-promise (promise)
-        listener (reify WebSocketListener
-                   (onWebSocketText [_ msg]
-                     (on-receive msg))
-                   (onWebSocketBinary [_ data offset length]
-                     (on-binary data offset length))
-                   (onWebSocketError [_ throwable]
-                     (if (realized? result-promise)
-                       (on-error throwable)
-                       (deliver result-promise throwable)))
-                   (onWebSocketConnect [_ session]
-                     (deliver result-promise session)
-                     (on-connect session))
-                   (onWebSocketClose [_ x y]
-                     (on-close x y)))]
-    (try
-      (.start client)
-      (.connect client listener uri request)
-      (let [result @result-promise
-            ^Session session (if (instance? Throwable result)
-                               (throw result)
-                               result)]
-        (reify Client
-          (send-msg [_ msg]
-            (send-to-endpoint msg (.getRemote session)))
-          (close [_] (do
-                       (.close session)
-                       (.stop client)))))
-      (catch Throwable ex
-        (.stop client)
-        (throw (Exception. ex))))))
+          :as opts}]
+  (connect* uri opts))
