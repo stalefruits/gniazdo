@@ -56,13 +56,13 @@
         ^String header
         ^java.util.List header-values))))
 
-(defn- websocket-upgrade-request
+(defn- upgrade-request
   ^ClientUpgradeRequest
   [{:keys [headers]}]
   (doto (ClientUpgradeRequest.)
     (add-headers! headers)))
 
-(defn- websocket-listener
+(defn- listener
   ^WebSocketListener
   [{:keys [on-connect on-receive on-binary on-error on-close]
     :or {on-connect noop
@@ -96,7 +96,7 @@
 
 ;; ## WebSocket Client + Connection (API)
 
-(defn websocket-client
+(defn client
   ^WebSocketClient
   ([] (WebSocketClient.))
   ([^URI uri]
@@ -109,7 +109,7 @@
    one."
   ([^String uri opts]
    (let [^URI uri' (URI. uri)
-         ^WebSocketClient client (websocket-client uri')]
+         ^WebSocketClient client (client uri')]
      (try
        (.start client)
        (connect* client uri' opts #(.stop client))
@@ -117,9 +117,9 @@
          (.stop client)
          (throw ex)))))
   ([^WebSocketClient client ^URI uri opts & [cleanup]]
-   (let [request (websocket-upgrade-request opts)
+   (let [request (upgrade-request opts)
          result-promise (promise)
-         listener (websocket-listener opts result-promise)]
+         listener (listener opts result-promise)]
      (.connect client listener uri request)
      (let [session (deref-session result-promise)]
        (reify Client
