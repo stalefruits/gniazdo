@@ -97,19 +97,23 @@
 ;; ## WebSocket Client + Connection (API)
 
 (defn client
-  ^WebSocketClient
-  ([] (WebSocketClient.))
-  ([^URI uri]
-   (if (= "wss" (.getScheme uri))
-     (WebSocketClient. (SslContextFactory.))
-     (WebSocketClient.))))
+  "Create a new instance of `WebSocketClient`. If the optionally supplied URI
+   is representing a secure WebSocket endpoint (\"wss://...\") an SSL-capable
+   instance will be returned."
+  (^WebSocketClient
+    [] (WebSocketClient.))
+  (^WebSocketClient
+    [^URI uri]
+    (if (= "wss" (.getScheme uri))
+      (WebSocketClient. (SslContextFactory.))
+      (WebSocketClient.))))
 
 (defn connect*
   "Connect to a WebSocket by either creating a new WebSocketClient or using the supplied
    one."
   ([^String uri opts]
-   (let [^URI uri' (URI. uri)
-         ^WebSocketClient client (client uri')]
+   (let [uri' (URI. uri)
+         client (client uri')]
      (try
        (.start client)
        (connect* client uri' opts #(.stop client))
