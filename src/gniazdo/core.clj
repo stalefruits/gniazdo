@@ -108,20 +108,11 @@
       (WebSocketClient. (SslContextFactory.))
       (WebSocketClient.))))
 
-(defn connect*
-  "Connect to a WebSocket by either creating a new WebSocketClient or using the supplied
-   one."
-  ([^String uri opts]
-   (let [uri' (URI. uri)
-         client (client uri')]
-     (try
-       (.start client)
-       (connect* client uri' opts #(.stop client))
-       (catch Throwable ex
-         (.stop client)
-         (throw ex)))))
-  ([^WebSocketClient client ^URI uri opts & [cleanup]]
+(defn- connect-with-client
+  "Connect to a WebSocket using the supplied `WebSocketClient` instance."
+  [^WebSocketClient client ^URI uri opts]
    (let [request (upgrade-request opts)
+         cleanup (::cleanup opts)
          result-promise (promise)
          listener (listener opts result-promise)]
      (.connect client listener uri request)
@@ -132,10 +123,24 @@
          (close [_]
            (when cleanup
              (cleanup))
-           (.close session)))))))
+           (.close session))))))
+
+(defn- connect-helper
+  [^URI uri opts]
+  (let [client (client uri)]
+    (try
+      (.start client)
+      (->> (assoc opts ::cleanup #(.stop client))
+           (connect-with-client client uri))
+      (catch Throwable ex
+        (.stop client)
+        (throw ex)))))
 
 (defn connect
   "Connects to a WebSocket at a given URI (e.g. ws://example.org:1234/socket)."
-  [uri & {:keys [on-connect on-receive on-binary on-error on-close headers]
+  [uri & {:keys [on-connect on-receive on-binary on-error on-close headers client]
           :as opts}]
-  (connect* uri opts))
+  (let [uri' (URI. uri)]
+    (if client
+      (connect-with-client client uri' opts)
+      (connect-helper uri' opts))))
