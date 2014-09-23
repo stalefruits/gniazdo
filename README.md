@@ -43,6 +43,8 @@ given `uri`. The following `options`/callbacks are available:
    Arguments are an `int` status code and a `String` description of reason.
  - `:headers` – a map of string keys and either string or string seq values to be
    used as headers for the initial websocket connection request.
+ - `:client` – an optional `WebSocketClient` instance to be used for connection
+   establishment; by default, a new one is created internally on each call.
 
 `gniazdo.core/connect` returns an opaque representation of the connection.
 
@@ -58,6 +60,15 @@ with `gniazdo.core/connect`. The message should be a `String`, `byte[]` or
 
 `gniazdo.core/close` closes a connection established with
 `gniazdo.core/connect`.
+
+### `(gniazdo.core/client [] [uri])`
+
+`gniazdo.core/client` creates an instance of `WebSocketClient`, optionally
+based on the given URI. If secure WebSocket connections are desired, an
+SSL-capable instance will be created.
+
+Note that the resulting client has to be started (`(.start client)`) before it
+can be used with `gniazdo.core/connect`.
 
 ## License
 
