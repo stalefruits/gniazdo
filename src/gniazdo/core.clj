@@ -1,6 +1,7 @@
 (ns gniazdo.core
   (:import java.net.URI
            java.nio.ByteBuffer
+           java.util.List
            (org.eclipse.jetty.websocket.client ClientUpgradeRequest
                                                WebSocketClient)
            (org.eclipse.jetty.util.ssl SslContextFactory)
@@ -56,11 +57,19 @@
         ^String header
         ^java.util.List header-values))))
 
+(defn- add-subprotocols!
+  [^ClientUpgradeRequest request subprotocols]
+  {:pre [(or (nil? subprotocols) (sequential? subprotocols))
+         (every? string? subprotocols)]}
+  (when-not (empty? subprotocols)
+    (.setSubProtocols request ^List (into () subprotocols))))
+
 (defn- upgrade-request
   ^ClientUpgradeRequest
-  [{:keys [headers]}]
+  [{:keys [headers subprotocols]}]
   (doto (ClientUpgradeRequest.)
-    (add-headers! headers)))
+    (add-headers! headers)
+    (add-subprotocols! subprotocols)))
 
 (defn- listener
   ^WebSocketListener
@@ -138,7 +147,7 @@
 
 (defn connect
   "Connects to a WebSocket at a given URI (e.g. ws://example.org:1234/socket)."
-  [uri & {:keys [on-connect on-receive on-binary on-error on-close headers client]
+  [uri & {:keys [on-connect on-receive on-binary on-error on-close headers client subprotocols]
           :as opts}]
   (let [uri' (URI. uri)]
     (if client

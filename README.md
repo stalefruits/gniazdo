@@ -45,6 +45,8 @@ given `uri`. The following `options`/callbacks are available:
    used as headers for the initial websocket connection request.
  - `:client` – an optional `WebSocketClient` instance to be used for connection
    establishment; by default, a new one is created internally on each call.
+ - `:subprotocols` - an optional sequence of `String`s specifying the subprotocols
+   to announce.
 
 `gniazdo.core/connect` returns an opaque representation of the connection.
 
