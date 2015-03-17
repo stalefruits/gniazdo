@@ -6,7 +6,8 @@
                                    on-receive
                                    run-server
                                    send!]])
-  (:import [java.util.concurrent Future]))
+  (:import [java.util.concurrent Future]
+           [org.eclipse.jetty.websocket.api Session]))
 
 (declare ^:dynamic *recv*)
 
@@ -100,3 +101,16 @@
     (close conn)
     (with-timeout (.acquire sem))
     (is (= @result :closed))))
+
+(deftest subprotocols-test
+  (let [result (atom nil)
+        sem (java.util.concurrent.Semaphore. 0)
+        conn (connect
+              uri
+              :subprotocols ["wamp"]
+              :on-connect (fn [^Session session]
+                            (reset! result (.. session getUpgradeRequest getSubProtocols))
+                            (.release sem)))]
+    (with-timeout (.acquire sem))
+    (is (= @result ["wamp"]))
+    (close conn)))
