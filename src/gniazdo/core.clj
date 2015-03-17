@@ -61,7 +61,7 @@
   [^ClientUpgradeRequest request subprotocols]
   {:pre [(or (nil? subprotocols) (sequential? subprotocols))
          (every? string? subprotocols)]}
-  (when-not (empty? subprotocols)
+  (when (seq subprotocols)
     (.setSubProtocols request ^List (into () subprotocols))))
 
 (defn- upgrade-request
