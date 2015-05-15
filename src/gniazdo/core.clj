@@ -41,9 +41,6 @@
 
 ;; ## WebSocket Helpers
 
-(defn- noop
-  [& _])
-
 (defn- add-headers!
   [^ClientUpgradeRequest request headers]
   {:pre [(every? string? (keys headers))]}
@@ -74,11 +71,11 @@
 (defn- listener
   ^WebSocketListener
   [{:keys [on-connect on-receive on-binary on-error on-close]
-    :or {on-connect noop
-         on-receive noop
-         on-binary  noop
-         on-error   noop
-         on-close   noop}}
+    :or {on-connect (constantly nil)
+         on-receive (constantly nil)
+         on-binary  (constantly nil)
+         on-error   (constantly nil)
+         on-close   (constantly nil)}}
    result-promise]
   (reify WebSocketListener
     (onWebSocketText [_ msg]
