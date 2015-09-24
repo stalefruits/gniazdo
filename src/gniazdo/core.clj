@@ -9,6 +9,13 @@
                                             RemoteEndpoint
                                             Session)))
 
+(when (pos? (->> (.split (System/getProperty "java.version") "\\.")
+                 (mapv #(Long/parseLong (.replaceAll % "^([0-9]*).*" "$1")))
+                 (compare [1 8 0])))
+  (binding [*out* *err*]
+    (println "WARNING: gniazdo 1.0 will not run on JVM 7 and older."
+             "Please upgrade to JVM 8 soon.")))
+
 (set! *warn-on-reflection* 1)
 
 ;; ## Messages
