@@ -1,7 +1,7 @@
-(defproject stylefruits/gniazdo "0.4.1"
+(defproject stylefruits/gniazdo "1.0.0-SNAPSHOT"
   :description "A WebSocket client for Clojure"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.eclipse.jetty.websocket/websocket-client "9.3.0.RC0"]]
+                 [org.eclipse.jetty.websocket/websocket-client "9.3.3.v20150827"]]
   :repl-options {:init-ns gniazdo.core}
   :jvm-opts ["-Dorg.eclipse.jetty.websocket.client.LEVEL=WARN"]
   :profiles {:dev
