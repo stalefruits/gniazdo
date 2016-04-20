@@ -7,7 +7,8 @@
            (org.eclipse.jetty.util.ssl SslContextFactory)
            (org.eclipse.jetty.websocket.api WebSocketListener
                                             RemoteEndpoint
-                                            Session)))
+                                            Session)
+           (org.eclipse.jetty.websocket.api.extensions ExtensionConfig)))
 
 (set! *warn-on-reflection* 1)
 
@@ -61,12 +62,21 @@
   (when (seq subprotocols)
     (.setSubProtocols request ^List (into () subprotocols))))
 
+(defn- add-extensions!
+  [^ClientUpgradeRequest request extensions]
+  {:pre [(or (nil? extensions) (sequential? extensions))
+         (every? string? extensions)]}
+  (when (seq extensions)
+    (.setExtensions request ^List (map #(ExtensionConfig. ^String %)
+                                       extensions))))
+
 (defn- upgrade-request
   ^ClientUpgradeRequest
-  [{:keys [headers subprotocols]}]
+  [{:keys [headers subprotocols extensions]}]
   (doto (ClientUpgradeRequest.)
     (add-headers! headers)
-    (add-subprotocols! subprotocols)))
+    (add-subprotocols! subprotocols)
+    (add-extensions! extensions)))
 
 (defn- listener
   ^WebSocketListener
@@ -144,7 +154,8 @@
 
 (defn connect
   "Connects to a WebSocket at a given URI (e.g. ws://example.org:1234/socket)."
-  [uri & {:keys [on-connect on-receive on-binary on-error on-close headers client subprotocols]
+  [uri & {:keys [on-connect on-receive on-binary on-error on-close headers client
+                 subprotocols extensions]
           :as opts}]
   (let [uri' (URI. uri)]
     (if client
