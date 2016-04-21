@@ -47,6 +47,8 @@ given `uri`. The following `options`/callbacks are available:
    establishment; by default, a new one is created internally on each call.
  - `:subprotocols` – an optional sequence of `String`s specifying the subprotocols
    to announce.
+ - `:extensions` – an optional sequence of `String`s specifying protocol
+   extensions.
 
 `gniazdo.core/connect` returns an opaque representation of the connection.
 
