@@ -137,3 +137,18 @@
     (with-timeout (.acquire sem))
     (is (= @result ["wamp"]))
     (close conn)))
+
+(deftest extensions-test
+  (let [result (atom nil)
+        sem (java.util.concurrent.Semaphore. 0)
+        conn (connect
+               uri
+               :extensions ["permessage-deflate"]
+               :on-connect (fn [^Session session]
+                             (reset! result (.. session getUpgradeRequest getExtensions))
+                             (.release sem)))]
+    (with-timeout (.acquire sem))
+    (is (-> @result
+          (.get 0)
+          (.getName)) "permessage-deflate")
+    (close conn)))
