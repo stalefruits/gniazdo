@@ -154,6 +154,7 @@
 
 (defn connect
   "Connects to a WebSocket at a given URI (e.g. ws://example.org:1234/socket)."
+  {:style/indent 1}
   [uri & {:keys [on-connect on-receive on-binary on-error on-close headers client
                  subprotocols extensions]
           :as opts}]
