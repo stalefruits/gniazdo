@@ -1,4 +1,4 @@
-(defproject stylefruits/gniazdo "1.0.1"
+(defproject stylefruits/gniazdo "1.0.2-SNAPSHOT"
   :description "A WebSocket client for Clojure"
   :license {:name "Apache License 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0.html"
