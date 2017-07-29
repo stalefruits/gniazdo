@@ -1,5 +1,11 @@
 (defproject stylefruits/gniazdo "1.0.1-SNAPSHOT"
   :description "A WebSocket client for Clojure"
+  :license {:name "Apache License 2.0"
+            :url "http://www.apache.org/licenses/LICENSE-2.0.html"
+            :year 2013
+            :key "apache-2.0"
+            :author "stylefruits GmbH"}
+  :url "https://github.com/stylefruits/gniazdo"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.eclipse.jetty.websocket/websocket-client "9.3.8.v20160314"]]
   :repl-options {:init-ns gniazdo.core}
