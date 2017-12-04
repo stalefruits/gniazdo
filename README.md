@@ -16,7 +16,7 @@ Add the following artifact to `:dependencies` in your project.clj:
 Here's a minimal usage example:
 
 ```clojure
-(require [gniazdo.core :as ws])
+(require '[gniazdo.core :as ws])
 (def socket
   (ws/connect
     "ws://example.org:1234/socket"
