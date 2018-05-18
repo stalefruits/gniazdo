@@ -7,8 +7,8 @@
             :author "stylefruits GmbH"}
   :url "https://github.com/stylefruits/gniazdo"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.eclipse.jetty.websocket/websocket-client "9.4.6.v20170531"]]
+                 [org.eclipse.jetty.websocket/websocket-client "9.4.10.v20180503"]]
   :repl-options {:init-ns gniazdo.core}
   :jvm-opts ["-Dorg.eclipse.jetty.websocket.client.LEVEL=WARN"]
   :profiles {:dev
-             {:dependencies [[http-kit "2.1.19"]]}})
+             {:dependencies [[http-kit "2.3.0"]]}})
