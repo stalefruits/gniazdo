@@ -92,6 +92,6 @@ can be used with `gniazdo.core/connect`.
 
 [def]: https://en.wiktionary.org/wiki/gniazdo
 [ws]: https://en.wikipedia.org/wiki/WebSocket
-[jetty]: http://www.eclipse.org/jetty/
-[session]: http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/websocket/api/Session.html
-[listener]: http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/websocket/api/WebSocketListener.html
+[jetty]: https://www.eclipse.org/jetty/
+[session]: https://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/websocket/api/Session.html
+[listener]: https://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/websocket/api/WebSocketListener.html
