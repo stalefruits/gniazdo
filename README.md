@@ -74,6 +74,9 @@ SSL-capable instance will be created.
 Note that the resulting client has to be started (`(.start client)`) before it
 can be used with `gniazdo.core/connect`.
 
+In order to use an HTTP proxy [configure][proxyconf] an [`HttpClient`][client]
+and create an instance of `WebSocketClient` [directly][wsclient-httpclient].
+
 ## License
 
     Copyright 2013 stylefruits GmbH
@@ -93,5 +96,8 @@ can be used with `gniazdo.core/connect`.
 [def]: https://en.wiktionary.org/wiki/gniazdo
 [ws]: https://en.wikipedia.org/wiki/WebSocket
 [jetty]: https://www.eclipse.org/jetty/
-[session]: https://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/websocket/api/Session.html
-[listener]: https://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/websocket/api/WebSocketListener.html
+[session]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/websocket/api/Session.html
+[listener]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/websocket/api/WebSocketListener.html
+[client]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/client/HttpClient.html
+[proxyconf]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/client/ProxyConfiguration.html
+[wsclient-httpclient]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/websocket/client/WebSocketClient.html#WebSocketClient-org.eclipse.jetty.client.HttpClient-
