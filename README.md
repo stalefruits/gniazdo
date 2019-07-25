@@ -96,8 +96,8 @@ and create an instance of `WebSocketClient` [directly][wsclient-httpclient].
 [def]: https://en.wiktionary.org/wiki/gniazdo
 [ws]: https://en.wikipedia.org/wiki/WebSocket
 [jetty]: https://www.eclipse.org/jetty/
-[session]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/websocket/api/Session.html
-[listener]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/websocket/api/WebSocketListener.html
-[client]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/client/HttpClient.html
-[proxyconf]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/client/ProxyConfiguration.html
-[wsclient-httpclient]: https://www.eclipse.org/jetty/javadoc/9.4.14.v20181114/org/eclipse/jetty/websocket/client/WebSocketClient.html#WebSocketClient-org.eclipse.jetty.client.HttpClient-
+[session]: https://www.eclipse.org/jetty/javadoc/9.4.19.v20190610/org/eclipse/jetty/websocket/api/Session.html
+[listener]: https://www.eclipse.org/jetty/javadoc/9.4.19.v20190610/org/eclipse/jetty/websocket/api/WebSocketListener.html
+[client]: https://www.eclipse.org/jetty/javadoc/9.4.19.v20190610/org/eclipse/jetty/client/HttpClient.html
+[proxyconf]: https://www.eclipse.org/jetty/javadoc/9.4.19.v20190610/org/eclipse/jetty/client/ProxyConfiguration.html
+[wsclient-httpclient]: https://www.eclipse.org/jetty/javadoc/9.4.19.v20190610/org/eclipse/jetty/websocket/client/WebSocketClient.html#%3Cinit%3E(org.eclipse.jetty.client.HttpClient)
