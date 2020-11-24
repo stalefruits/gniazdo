@@ -60,10 +60,10 @@ See also [WebSocketListener][listener].
 with `gniazdo.core/connect`. The message should be a `String`, `byte[]` or
 `java.nio.ByteBuffer`.
 
-### `(gniazdo.core/close [conn])`
+### `(gniazdo.core/close [conn] [conn status-code reason])`
 
 `gniazdo.core/close` closes a connection established with
-`gniazdo.core/connect`.
+`gniazdo.core/connect`. Optionally includes a status int and reason.
 
 ### `(gniazdo.core/client [] [uri])`
 
