@@ -72,7 +72,8 @@ based on the given URI. If secure WebSocket connections are desired, an
 SSL-capable instance will be created.
 
 Note that the resulting client has to be started (`(.start client)`) before it
-can be used with `gniazdo.core/connect`.
+can be used with `gniazdo.core/connect`, and it must be closed (`(.stop client)`)
+after the websocket has been closed to prevent a resource leak.
 
 In order to use an HTTP proxy [configure][proxyconf] an [`HttpClient`][client]
 and create an instance of `WebSocketClient` [directly][wsclient-httpclient].
