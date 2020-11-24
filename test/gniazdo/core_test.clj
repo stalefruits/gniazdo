@@ -148,7 +148,6 @@
                              (reset! result (.. session getUpgradeRequest getExtensions))
                              (.release sem)))]
     (with-timeout (.acquire sem))
-    (is (-> @result
-          (.get 0)
-          (.getName)) "permessage-deflate")
+    (is (= (-> @result (.get 0) (.getName))
+           "permessage-deflate"))
     (close conn)))
