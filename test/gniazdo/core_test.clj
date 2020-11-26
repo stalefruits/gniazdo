@@ -4,21 +4,25 @@
         gniazdo.core
         [org.httpkit.server :only [with-channel
                                    on-receive
+                                   on-close
                                    run-server
                                    send!]])
   (:import [java.util.concurrent Future]
            [org.eclipse.jetty.websocket.api Session]))
 
 (declare ^:dynamic *recv*)
+(def close-code (atom nil))
 
 (defn- ws-srv
   [req]
   (with-channel req conn
-    (on-receive conn (partial *recv* req conn))))
+    (on-receive conn (partial *recv* req conn))
+    (on-close conn #(reset! close-code %))))
 
 (use-fixtures
   :each
   (fn [f]
+    (reset! close-code nil)
     (let [srv (run-server ws-srv {:port 65432})]
       (try
         (f)
@@ -101,6 +105,17 @@
     (close conn)
     (with-timeout (.acquire sem))
     (is (= @result :closed))))
+
+(deftest close-with-code-test
+  (let [sem (java.util.concurrent.Semaphore. 0)
+        conn (connect
+              uri
+              :on-close (fn [& _]
+                          (.release sem)))]
+    (is (= @close-code nil))
+    (close conn 1003 "Unsupported")
+    (with-timeout (.acquire sem))
+    (is (= @close-code :unsupported))))
 
 (deftest on-error-test
   (testing "invalid arity"
