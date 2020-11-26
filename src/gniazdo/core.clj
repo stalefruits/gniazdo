@@ -141,9 +141,9 @@
              (cleanup))
            (.close session))
          (close [_ status-code reason]
+           (.close session status-code reason)
            (when cleanup
-             (cleanup))
-           (.close session status-code reason))))))
+             (cleanup)))))))
 
 (defn- connect-helper
   [^URI uri opts]
