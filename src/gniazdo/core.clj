@@ -137,9 +137,9 @@
          (send-msg [_ msg]
            (send-to-endpoint msg (.getRemote session)))
          (close [_]
+           (.close session)
            (when cleanup
-             (cleanup))
-           (.close session))
+             (cleanup)))
          (close [_ status-code reason]
            (.close session status-code reason)
            (when cleanup
