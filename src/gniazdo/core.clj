@@ -37,7 +37,7 @@
 (defprotocol ^:private Client
   (send-msg [this msg]
     "Sends a message (implementing `gniazdo.core/Sendable`) to the given WebSocket.")
-  (close [this]
+  (close [this] [this status-code reason]
     "Closes the WebSocket."))
 
 ;; ## WebSocket Helpers
@@ -139,7 +139,11 @@
          (close [_]
            (when cleanup
              (cleanup))
-           (.close session))))))
+           (.close session))
+         (close [_ status-code reason]
+           (.close session status-code reason)
+           (when cleanup
+             (cleanup)))))))
 
 (defn- connect-helper
   [^URI uri opts]
