@@ -4,11 +4,11 @@
            java.util.List
            (org.eclipse.jetty.websocket.client ClientUpgradeRequest
                                                WebSocketClient)
-           (org.eclipse.jetty.util.ssl SslContextFactory)
+           (org.eclipse.jetty.util.ssl SslContextFactory$Client)
            (org.eclipse.jetty.websocket.api WebSocketListener
                                             RemoteEndpoint
-                                            Session)
-           (org.eclipse.jetty.websocket.api.extensions ExtensionConfig)))
+                                            Session
+                                            ExtensionConfig)))
 
 (set! *warn-on-reflection* 1)
 
@@ -21,16 +21,16 @@
 (extend-protocol Sendable
   java.lang.String
   (send-to-endpoint [msg ^RemoteEndpoint e]
-    @(.sendStringByFuture e msg))
+    (.sendString e msg))
 
   java.nio.ByteBuffer
   (send-to-endpoint [buf ^RemoteEndpoint e]
-    @(.sendBytesByFuture e buf)))
+    (.sendBytes e buf)))
 
 (extend-type (class (byte-array 0))
   Sendable
   (send-to-endpoint [data ^RemoteEndpoint e]
-    @(.sendBytesByFuture e (ByteBuffer/wrap data))))
+    (.sendBytes e (ByteBuffer/wrap data))))
 
 ;; ## Client
 
@@ -67,7 +67,7 @@
   {:pre [(or (nil? extensions) (sequential? extensions))
          (every? string? extensions)]}
   (when (seq extensions)
-    (.setExtensions request ^List (map #(ExtensionConfig. ^String %)
+    (.setExtensions request ^List (map #(ExtensionConfig/parse ^String %)
                                        extensions))))
 
 (defn- upgrade-request
@@ -121,7 +121,7 @@
   (^WebSocketClient
     [^URI uri]
     (if (= "wss" (.getScheme uri))
-      (WebSocketClient. (SslContextFactory.))
+      (WebSocketClient. (SslContextFactory$Client.))
       (WebSocketClient.))))
 
 (defn- connect-with-client

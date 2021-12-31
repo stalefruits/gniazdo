@@ -8,7 +8,8 @@
                                    run-server
                                    send!]])
   (:import [java.util.concurrent Future]
-           [org.eclipse.jetty.websocket.api Session]))
+           [org.eclipse.jetty.websocket.api Session]
+           [org.eclipse.jetty.websocket.api.exceptions CloseException]))
 
 (declare ^:dynamic *recv*)
 (def close-code (atom nil))
@@ -125,7 +126,7 @@
                    uri
                    :on-error (fn on-error [ex] (deliver result ex))
                    :on-connect (fn on-connect [_ _ _ _ _]))]
-        (is (instance? clojure.lang.ArityException
+        (is (instance? CloseException
                        (with-timeout @result)))
         (close conn)))
     (testing ":on-receive"

@@ -6,9 +6,11 @@
             :key "apache-2.0"
             :author "stylefruits GmbH"}
   :url "https://github.com/stylefruits/gniazdo"
-  :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.eclipse.jetty.websocket/websocket-client "9.4.35.v20201120"]]
+  :dependencies [[org.clojure/clojure "1.10.3"]
+                 [org.eclipse.jetty.websocket/websocket-jetty-api "11.0.7"]
+                 [org.eclipse.jetty.websocket/websocket-jetty-client "11.0.7"]]
   :repl-options {:init-ns gniazdo.core}
+  :javac-options ["-target" "11" "-source" "11"]
   :jvm-opts ["-Dorg.eclipse.jetty.websocket.client.LEVEL=WARN"]
   :profiles {:dev
-             {:dependencies [[http-kit "2.3.0"]]}})
+             {:dependencies [[http-kit "2.5.3"]]}})
