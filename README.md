@@ -9,6 +9,12 @@ schemas.
 
 ## Usage
 
+Consider using [Hato][hato] instead.
+It [supports WebSockets][hatows] by wrapping JDK 11's HttpClient.
+Unlike Gniazdo, Hato does not depend on any third-party libraries.
+
+## If You Insist
+
 Add the following artifact to `:dependencies` in your project.clj:
 
 [![Latest version](https://clojars.org/stylefruits/gniazdo/latest-version.svg)](https://clojars.org/stylefruits/gniazdo)
@@ -102,3 +108,5 @@ and create an instance of `WebSocketClient` [directly][wsclient-httpclient].
 [client]: https://www.eclipse.org/jetty/javadoc/9.4.35.v20201120/org/eclipse/jetty/client/HttpClient.html
 [proxyconf]: https://www.eclipse.org/jetty/javadoc/9.4.35.v20201120/org/eclipse/jetty/client/ProxyConfiguration.html
 [wsclient-httpclient]: https://www.eclipse.org/jetty/javadoc/9.4.35.v20201120/org/eclipse/jetty/websocket/client/WebSocketClient.html#%3Cinit%3E(org.eclipse.jetty.client.HttpClient)
+[hato]: https://github.com/gnarroway/hato
+[hatows]: https://github.com/gnarroway/hato/blob/v0.8.2/README.md#websockets
